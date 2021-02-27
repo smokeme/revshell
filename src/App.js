@@ -10,6 +10,8 @@ import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import AllInclusiveIcon from "@material-ui/icons/AllInclusive";
+import Copyright from "./Components/Copyright";
+import Box from "@material-ui/core/Box";
 
 const themeDark = createMuiTheme({
   palette: {
@@ -42,6 +44,14 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(1),
     textAlign: "center",
     color: themeDark.palette.text.primary,
+  },
+  footer: {
+    // position: "fixed",
+    bottom: 2,
+    height: "40px",
+    marginTop: "120px",
+    textAlign: "center",
+    verticalAlign: "middle",
   },
 }));
 const App = () => {
@@ -219,6 +229,9 @@ const App = () => {
             </React.Fragment>
           }
         />
+        <Box className={classes.footer}>
+          <Copyright />
+        </Box>
       </Container>
     </MuiThemeProvider>
   );
