@@ -52,6 +52,7 @@ const Payloads = ({ copyToClipboard, classes }) => {
           multiline
           label="IP Address"
           variant="outlined"
+          onFocus={(e) => e.target.select()}
           InputLabelProps={{
             shrink: true,
           }}
@@ -64,6 +65,7 @@ const Payloads = ({ copyToClipboard, classes }) => {
           multiline
           label="Port"
           variant="outlined"
+          onFocus={(e) => e.target.select()}
           InputLabelProps={{
             shrink: true,
           }}

